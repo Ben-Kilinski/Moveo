@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { broadcastSong } from '../index';
 import fetch from 'node-fetch';
-import { fetchChordsAndLyricsFromTab4U } from '../utils/fetchTab4U';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -15,8 +14,7 @@ router.post('/current', async (req: Request, res: Response): Promise<any> => {
     return res.status(400).json({ message: 'Invalid song data' });
   }
 
-  const { lyrics, chords } = await fetchChordsAndLyricsFromTab4U(song.trackName, song.artistName);
-  console.log({ lyrics, chords }); // 👀
+  const lyrics = await fetchLyrics(song.artistName, song.trackName);
 
   const saved = await prisma.song.create({
     data: {
@@ -25,10 +23,14 @@ router.post('/current', async (req: Request, res: Response): Promise<any> => {
       artistName: song.artistName,
       artworkUrl100: song.artworkUrl100,
       previewUrl: song.previewUrl,
-      lyrics,          
-      chords, 
+      lyrics,
+      chords: null, // será preenchido depois pelo admin
     },
   });
+
+  console.log("🎤 Buscando letra de:", song.artistName, "-", song.trackName);
+  console.log("🎤 LETRA:", lyrics);
+
 
   broadcastSong(saved);
   console.log('🎵 Saved and broadcasted:', saved.trackName);
@@ -36,7 +38,7 @@ router.post('/current', async (req: Request, res: Response): Promise<any> => {
 });
 
 // GET /api/songs/current
-router.get('/current', async (req: Request, res: Response): Promise<any> => {
+router.get('/current', async (_req: Request, res: Response): Promise<any> => {
   const last = await prisma.song.findFirst({
     orderBy: { timestamp: 'desc' },
   });
@@ -60,15 +62,39 @@ router.delete('/history', async (_req, res) => {
   res.status(200).json({ message: 'History cleared' });
 });
 
-// async function fetchLyrics(artist: string, title: string): Promise<string | null> {
-//   try {
-//     const res = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`);
-//     const data = await res.json() as { lyrics?: string };
-//     return data.lyrics || null;
-//   } catch (err) {
-//     console.error('Lyrics fetch error:', err);
-//     return null;
-//   }
-// }
+// Busca letra na API Lyrics.ovh
+async function fetchLyrics(artist: string, title: string): Promise<string | null> {
+  try {
+    const res = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`);
+    const data = await res.json() as { lyrics?: string };
+    return data.lyrics || null;
+  } catch (err) {
+    console.error('Lyrics fetch error:', err);
+    return null;
+  }
+}
+
+// PATCH /api/songs/:id/chords
+router.patch('/:id/chords', async (req: Request, res: Response): Promise<any> => {
+  const { id } = req.params;
+  const { chords } = req.body;
+
+  if (!chords) {
+    return res.status(400).json({ message: 'Missing chords in request body' });
+  }
+
+  try {
+    const updated = await prisma.song.update({
+      where: { id: Number(id) },
+      data: { chords: JSON.stringify(chords) },
+    });
+
+    return res.status(200).json({ message: 'Chords updated', song: updated });
+  } catch (err) {
+    console.error('Error updating chords:', err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 export default router;

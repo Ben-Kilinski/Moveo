@@ -149,10 +149,30 @@ export default function LivePage() {
           )}
           {song.chords && (
             <div className="mt-6 p-4 border rounded shadow bg-white max-w-2xl mx-auto">
-              <h4 className="text-lg font-bold mb-2">Chords</h4>
-              <pre className="whitespace-pre-wrap text-sm text-gray-800">{song.chords}</pre>
+              <h4 className="text-lg font-bold mb-4 text-center">Chords</h4>
+              <div className="space-y-4 text-left font-mono text-sm">
+                {JSON.parse(song.chords).map((line: any[], lineIdx: number) => (
+                  <div key={lineIdx}>
+                    <div className="flex gap-2">
+                      {line.map((item, idx) => (
+                        <span key={idx} className="min-w-[50px] text-blue-600 text-center">
+                          {item.chords || ''}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      {line.map((item, idx) => (
+                        <span key={idx} className="min-w-[50px] text-gray-800 text-center">
+                          {item.lyrics}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+
         </>
       )}
     </div>
