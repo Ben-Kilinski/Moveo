@@ -32,7 +32,7 @@ const instructionMap: Record<string, string> = {
 
 export default function LivePage() {
   const [song, setSong] = useState<Song | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [audioKey, setAudioKey] = useState(0);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const instrument = user.instrument || 'unknown';
@@ -40,48 +40,71 @@ export default function LivePage() {
   const instruction = instructionMap[instrument];
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:3002');
+    const socket = new WebSocket('ws://localhost:3002');
 
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'update' && data.song) {
-          setSong(data.song);
-        }
-      } catch (err) {
-        console.error('Invalid message', err);
-      } finally {
-        setLoading(false);
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === 'update') {
+        setSong(message.song);
+        setAudioKey(prev => prev + 1);
       }
     };
 
-    ws.onerror = (err) => console.error('WebSocket error', err);
-    ws.onclose = () => console.log('WebSocket closed');
+    socket.onerror = (err) => {
+      console.error('WebSocket error:', err);
+    };
 
-    return () => ws.close();
+    return () => socket.close();
   }, []);
 
-  if (loading) return <div className="p-4">Loading song...</div>;
-  if (!song) return <div className="p-4 text-red-600">No song selected</div>;
+  const selectExampleSong = async () => {
+    const exampleSong = {
+      trackId: 999,
+      trackName: 'Superstition',
+      artistName: 'Stevie Wonder',
+      artworkUrl100: 'https://upload.wikimedia.org/wikipedia/en/e/e8/Stevie_Wonder_-_Superstition.jpg',
+      previewUrl: 'https://p.scdn.co/mp3-preview/example.mp3'
+    };
+
+    await fetch('http://localhost:3001/api/songs/current', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(exampleSong)
+    });
+  };
 
   return (
     <div className="p-4 text-center">
       <h1 className="text-2xl font-bold mb-4">Now Playing</h1>
-      <img src={song.artworkUrl100} alt={song.trackName} className="mx-auto rounded mb-4" />
-      <h2 className="text-xl font-semibold">{song.trackName}</h2>
-      <p className="text-gray-600 mb-4">{song.artistName}</p>
-      {song.previewUrl && (
-        <audio controls className="mx-auto">
-          <source src={song.previewUrl} type="audio/mpeg" />
-        </audio>
-      )}
+      {!song ? (
+        <>
+          <p className="mb-4 text-red-500">No song selected</p>
+          <button
+            onClick={selectExampleSong}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Load Example Song
+          </button>
+        </>
+      ) : (
+        <>
+          <img src={song.artworkUrl100} alt={song.trackName} className="mx-auto rounded mb-4" />
+          <h2 className="text-xl font-semibold">{song.trackName}</h2>
+          <p className="text-gray-600 mb-4">{song.artistName}</p>
+          {song.previewUrl && (
+            <audio key={audioKey} controls autoPlay className="mx-auto">
+              <source src={song.previewUrl} type="audio/mpeg" />
+            </audio>
+          )}
 
-      <div className="mt-6 p-4 border rounded shadow bg-gray-50">
-        <h3 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2">
-          <Icon className="w-5 h-5" /> Instructions for: {instrument}
-        </h3>
-        <p className="text-sm text-gray-700">{instruction}</p>
-      </div>
+          <div className="mt-6 p-4 border rounded shadow bg-gray-50">
+            <h3 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2">
+              <Icon className="w-5 h-5" /> Instructions for: {instrument}
+            </h3>
+            <p className="text-sm text-gray-700">{instruction}</p>
+          </div>
+        </>
+      )}
     </div>
   );
 }
