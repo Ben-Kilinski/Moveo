@@ -147,7 +147,12 @@ export default function LivePage() {
               <pre className="whitespace-pre-wrap text-sm text-gray-800">{song.lyrics}</pre>
             </div>
           )}
-
+          {song.chords && (
+            <div className="mt-6 p-4 border rounded shadow bg-white max-w-2xl mx-auto">
+              <h4 className="text-lg font-bold mb-2">Chords</h4>
+              <pre className="whitespace-pre-wrap text-sm text-gray-800">{song.chords}</pre>
+            </div>
+          )}
         </>
       )}
     </div>
