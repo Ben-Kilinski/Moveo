@@ -5,6 +5,7 @@ import PlayerMainPage from './pages/PlayerMainPage';
 import AdminMainPage from './pages/AdminMainPage';
 import ResultsPage from './pages/ResultsPage';
 import LivePage from './pages/LivePage';
+import OnboardingPage from './pages/OnboardingPage'; // ✅ importado
 import RequireAuth from './components/RequireAuth';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
       />
 
       <Route path="/admin/results" element={<ResultsPage />} />
+      <Route path="/onboarding" element={<OnboardingPage />} /> {/* ✅ nova rota */}
       <Route path="/live" element={<LivePage />} />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
