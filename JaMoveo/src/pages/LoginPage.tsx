@@ -3,11 +3,28 @@ import { useState } from 'react';
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ username, password });
-    // TODO: enviar dados para backend para autenticação
+    try {
+      const res = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Login failed');
+
+      console.log('Login successful ✅', data);
+      setMessage('Login successful ✅');
+      // TODO: armazenar token e redirecionar
+    } catch (err: any) {
+      setMessage(err.message);
+    }
   };
 
   return (
@@ -36,6 +53,7 @@ export default function LoginPage() {
         >
           Login
         </button>
+        {message && <p className="mt-2 text-sm text-center text-red-600">{message}</p>}
       </form>
     </div>
   );
