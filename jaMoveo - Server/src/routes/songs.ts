@@ -5,9 +5,10 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 let currentSong: any = null; // memória simples (pode ser substituído depois por banco ou cache)
+let history: any[] = [];     // histórico em memória
 
+// POST /api/songs/current
 router.post('/current', async (req: Request, res: Response): Promise<any> => {
-
   const song = req.body;
 
   if (!song || !song.trackId) {
@@ -15,16 +16,23 @@ router.post('/current', async (req: Request, res: Response): Promise<any> => {
   }
 
   currentSong = song;
+  history.unshift({ ...song, timestamp: Date.now() }); // adiciona no início do array
   console.log('🎵 Current song set:', song.trackName);
   return res.status(200).json({ message: 'Song selected' });
 });
 
-router.get('/current', async (req: Request, res: Response): Promise<any> => {
+// GET /api/songs/current
+router.get('/current', async (_req: Request, res: Response): Promise<any> => {
   if (!currentSong) {
     return res.status(404).json({ message: 'No song selected' });
   }
 
   return res.json(currentSong);
+});
+
+// GET /api/songs/history
+router.get('/history', async (_req: Request, res: Response): Promise<any> => {
+  return res.json(history);
 });
 
 export default router;
