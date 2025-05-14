@@ -9,6 +9,8 @@ interface Song {
   artistName: string;
   artworkUrl100: string;
   previewUrl: string;
+  lyrics?: string;
+  chords?: string;
 }
 
 const iconMap: Record<string, LucideIcon> = {
@@ -138,6 +140,14 @@ export default function LivePage() {
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">{instruction}</p>
           </div>
+
+          {song.lyrics && (
+            <div className="mt-6 p-4 border rounded shadow bg-white text-left max-w-2xl mx-auto">
+              <h4 className="text-lg font-bold mb-2">Lyrics</h4>
+              <pre className="whitespace-pre-wrap text-sm text-gray-800">{song.lyrics}</pre>
+            </div>
+          )}
+
         </>
       )}
     </div>
