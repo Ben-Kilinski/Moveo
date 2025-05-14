@@ -40,21 +40,25 @@ export default function LivePage() {
   const instruction = instructionMap[instrument];
 
   useEffect(() => {
-    const fetchSong = async () => {
+    const ws = new WebSocket('ws://localhost:3002');
+
+    ws.onmessage = (event) => {
       try {
-        const res = await fetch('http://localhost:3001/api/songs/current');
-        if (!res.ok) throw new Error('No song selected');
-        const data = await res.json();
-        setSong(data);
+        const data = JSON.parse(event.data);
+        if (data.type === 'update' && data.song) {
+          setSong(data.song);
+        }
       } catch (err) {
-        console.error(err);
-        setSong(null);
+        console.error('Invalid message', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSong();
+    ws.onerror = (err) => console.error('WebSocket error', err);
+    ws.onclose = () => console.log('WebSocket closed');
+
+    return () => ws.close();
   }, []);
 
   if (loading) return <div className="p-4">Loading song...</div>;
@@ -81,4 +85,3 @@ export default function LivePage() {
     </div>
   );
 }
-

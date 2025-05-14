@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { broadcastSong } from '../index'; // ajuste o caminho se necessário
+
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -17,6 +19,7 @@ router.post('/current', async (req: Request, res: Response): Promise<any> => {
 
   currentSong = song;
   history.unshift({ ...song, timestamp: Date.now() }); // adiciona no início do array
+  broadcastSong(currentSong); //notifica live page
   console.log('🎵 Current song set:', song.trackName);
   return res.status(200).json({ message: 'Song selected' });
 });
