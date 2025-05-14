@@ -21,7 +21,6 @@ export default function LoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Login failed');
 
-      // Armazenar token e redirecionar
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
@@ -36,33 +35,35 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="p-8 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Login</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Username"
-          className="w-full border p-2 rounded"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border p-2 rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Login
-        </button>
-        {message && <p className="mt-2 text-sm text-center text-red-600">{message}</p>}
-      </form>
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-slate-100 to-slate-200 p-6">
+      <div className="w-full max-w-md bg-white/60 backdrop-blur p-6 rounded-xl shadow">
+        <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Username"
+            className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          >
+            Login
+          </button>
+          {message && <p className="mt-2 text-sm text-center text-red-600">{message}</p>}
+        </form>
+      </div>
     </div>
   );
 }
