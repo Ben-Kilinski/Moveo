@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface Song {
@@ -14,6 +14,7 @@ export default function AdminMainPage() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedSongId, setSelectedSongId] = useState<number | null>(null);
+  const [currentDbId, setCurrentDbId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   const searchSongs = async () => {
@@ -43,6 +44,10 @@ export default function AdminMainPage() {
         alert('Failed to select song: ' + error.message);
       } else {
         alert('Song selected 🎶');
+        // buscar o id real no banco
+        const current = await fetch('http://localhost:3001/api/songs/current');
+        const data = await current.json();
+        setCurrentDbId(data.id);
       }
     } catch (err) {
       console.error(err);
@@ -97,6 +102,16 @@ export default function AdminMainPage() {
             >
               {selectedSongId === song.trackId ? 'Selected' : 'Select'}
             </button>
+
+            {/* Botão para editar cifra */}
+            {selectedSongId === song.trackId && currentDbId && (
+              <button
+                onClick={() => navigate(`/admin/chords-editor/${currentDbId}`)}
+                className="mt-2 px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+              >
+                Editar Cifras
+              </button>
+            )}
           </div>
         ))}
       </div>
