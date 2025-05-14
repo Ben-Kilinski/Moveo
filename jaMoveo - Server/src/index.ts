@@ -26,7 +26,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server is listening on http://localhost:${PORT}`);
 });
 
-export function broadcastSong(song) {
+export function broadcastSong(song: Record<string, any>) {
   wss.clients.forEach((client) => {
     if (client.readyState === 1) {
       client.send(JSON.stringify({ type: 'update', song }));
