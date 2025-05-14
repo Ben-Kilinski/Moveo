@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { broadcastSong } from '../index';
 import fetch from 'node-fetch';
+import { fetchChordsAndLyricsFromTab4U } from '../utils/fetchTab4U';
 
 
 const router = express.Router();
@@ -15,7 +16,7 @@ router.post('/current', async (req: Request, res: Response): Promise<any> => {
     return res.status(400).json({ message: 'Invalid song data' });
   }
 
-  const lyrics = await fetchLyrics(song.artistName, song.trackName);
+  const { lyrics, chords } = await fetchChordsAndLyricsFromTab4U(song.trackName, song.artistName);
 
   const saved = await prisma.song.create({
     data: {
