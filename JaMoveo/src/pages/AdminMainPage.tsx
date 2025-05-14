@@ -16,6 +16,17 @@ export default function AdminMainPage() {
   const [selectedSongId, setSelectedSongId] = useState<number | null>(null);
   const [currentDbId, setCurrentDbId] = useState<number | null>(null);
   const navigate = useNavigate();
+  const [latestSong, setLatestSong] = useState<{ id: number; trackName: string } | null>(null);
+
+  useEffect(() => {
+    const fetchCurrent = async () => {
+      const res = await fetch('http://localhost:3001/api/songs/current');
+      const data = await res.json();
+      setLatestSong({ id: data.id, trackName: data.trackName });
+    };
+    fetchCurrent();
+  }, []);
+
 
   const searchSongs = async () => {
     setLoading(true);
@@ -59,6 +70,20 @@ export default function AdminMainPage() {
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">Search any song...</h1>
       <div className="flex gap-2 mb-4">
+        {latestSong && (
+          <div className="mb-4 flex items-center justify-between border p-3 rounded bg-slate-50">
+            <p className="text-sm">
+              Última música selecionada: <strong>{latestSong.trackName}</strong>
+            </p>
+            <button
+              onClick={() => navigate(`/admin/chords-editor/${latestSong.id}`)}
+              className="ml-4 bg-indigo-600 text-white px-4 py-1.5 rounded hover:bg-indigo-700"
+            >
+              Editar Cifras
+            </button>
+          </div>
+        )}
+
         <input
           type="text"
           className="border rounded p-2 w-full"
@@ -95,9 +120,8 @@ export default function AdminMainPage() {
             )}
             <button
               onClick={() => handleSelect(song)}
-              className={`mt-2 px-3 py-1 rounded text-white ${
-                selectedSongId === song.trackId ? 'bg-gray-500' : 'bg-green-600 hover:bg-green-700'
-              }`}
+              className={`mt-2 px-3 py-1 rounded text-white ${selectedSongId === song.trackId ? 'bg-gray-500' : 'bg-green-600 hover:bg-green-700'
+                }`}
               disabled={selectedSongId === song.trackId}
             >
               {selectedSongId === song.trackId ? 'Selected' : 'Select'}

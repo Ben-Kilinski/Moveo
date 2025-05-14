@@ -32,7 +32,10 @@ router.post('/current', async (req: Request, res: Response): Promise<any> => {
   console.log("🎤 LETRA:", lyrics);
 
 
-  broadcastSong(saved);
+  const full = await prisma.song.findUnique({ where: { id: saved.id } });
+
+  broadcastSong(full!);
+
   console.log('🎵 Saved and broadcasted:', saved.trackName);
   return res.status(200).json({ message: 'Song selected' });
 });
@@ -89,12 +92,16 @@ router.patch('/:id/chords', async (req: Request, res: Response): Promise<any> =>
       data: { chords: JSON.stringify(chords) },
     });
 
+    // ✅ Dispara o broadcast com a nova versão da música
+    broadcastSong(updated);
+
     return res.status(200).json({ message: 'Chords updated', song: updated });
   } catch (err) {
     console.error('Error updating chords:', err);
     return res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 
 export default router;
