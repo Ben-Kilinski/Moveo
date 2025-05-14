@@ -22,5 +22,8 @@ model Song {
   artistName     String
   artworkUrl100  String
   previewUrl     String
-  timestamp      DateTime @default(now())
+  lyrics         String?  
+  chords         String?   
+  timestamp      DateTime  @default(now())
 }
+
