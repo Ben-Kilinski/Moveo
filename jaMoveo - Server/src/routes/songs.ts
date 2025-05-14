@@ -35,4 +35,10 @@ router.get('/history', async (_req: Request, res: Response): Promise<any> => {
   return res.json(history);
 });
 
+// DELETE /api/songs/history
+router.delete('/history', (_req, res) => {
+  history = [];
+  res.status(200).json({ message: 'History cleared' });
+});
+
 export default router;

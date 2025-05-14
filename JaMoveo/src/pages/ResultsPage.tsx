@@ -20,6 +20,25 @@ export default function ResultsPage() {
     setSongs([]);
   };
 
+  const exportCSV = () => {
+    const headers = ['Track Name', 'Artist', 'Date'];
+    const rows = songs.map(song => [
+      song.trackName,
+      song.artistName,
+      new Date(song.timestamp).toLocaleString()
+    ]);
+    const csvContent = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'song-history.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -44,12 +63,20 @@ export default function ResultsPage() {
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Selection History</h1>
-        <button
-          onClick={clearHistory}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          Clear History
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={exportCSV}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Export CSV
+          </button>
+          <button
+            onClick={clearHistory}
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          >
+            Clear History
+          </button>
+        </div>
       </div>
       <ul className="space-y-4">
         {songs.map((song) => (
