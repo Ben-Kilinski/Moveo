@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Music, Drum, Guitar, Mic2, Piano } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface Song {
   trackId: number;
@@ -8,9 +10,34 @@ interface Song {
   previewUrl: string;
 }
 
+const iconMap: Record<string, LucideIcon> = {
+  drums: Drum,
+  guitar: Guitar,
+  bass: Guitar,
+  vocals: Mic2,
+  keyboards: Piano,
+  saxophone: Music,
+  unknown: Music,
+};
+
+const instructionMap: Record<string, string> = {
+  drums: 'Keep the tempo steady, focus on rhythm.',
+  guitar: 'Play chord progression in G major.',
+  bass: 'Follow root notes and lock with kick drum.',
+  saxophone: 'Improvise over the chorus using G pentatonic.',
+  keyboards: 'Use ambient pads and soft chords in intro.',
+  vocals: 'Sing the main melody, follow the lyrics on sheet.',
+  unknown: 'No instrument assigned.',
+};
+
 export default function LivePage() {
   const [song, setSong] = useState<Song | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const instrument = user.instrument || 'unknown';
+  const Icon = iconMap[instrument] || Music;
+  const instruction = instructionMap[instrument];
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -44,6 +71,14 @@ export default function LivePage() {
           <source src={song.previewUrl} type="audio/mpeg" />
         </audio>
       )}
+
+      <div className="mt-6 p-4 border rounded shadow bg-gray-50">
+        <h3 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2">
+          <Icon className="w-5 h-5" /> Instructions for: {instrument}
+        </h3>
+        <p className="text-sm text-gray-700">{instruction}</p>
+      </div>
     </div>
   );
 }
+
