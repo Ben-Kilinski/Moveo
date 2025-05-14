@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'changeme';
 
 // POST /signup
-router.post('/signup', async (req: Request, res: Response): Promise<void> => {
+router.post('/signup', async (req: Request, res: Response): Promise<any> => {
   const { username, password, instrument, role } = req.body;
 
   const existingUser = await prisma.user.findUnique({ where: { username } });
@@ -41,7 +41,7 @@ router.post('/signup', async (req: Request, res: Response): Promise<void> => {
 });
 
 // POST /login
-router.post('/login', async (req: Request, res: Response): Promise<void> => {
+router.post('/login', async (req: Request, res: Response): Promise<any> => {
   const { username, password } = req.body;
 
   const user = await prisma.user.findUnique({ where: { username } });
