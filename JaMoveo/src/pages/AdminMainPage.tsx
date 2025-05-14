@@ -12,6 +12,7 @@ export default function AdminMainPage() {
   const [term, setTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedSongId, setSelectedSongId] = useState<number | null>(null);
 
   const searchSongs = async () => {
     setLoading(true);
@@ -19,6 +20,32 @@ export default function AdminMainPage() {
     const data = await res.json();
     setSongs(data.results);
     setLoading(false);
+  };
+
+  const handleSelect = async (song: Song) => {
+    setSelectedSongId(song.trackId);
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://localhost:3001/api/songs/current', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(song),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert('Failed to select song: ' + error.message);
+      } else {
+        alert('Song selected 🎶');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Something went wrong.');
+    }
   };
 
   return (
@@ -53,8 +80,14 @@ export default function AdminMainPage() {
                 <source src={song.previewUrl} type="audio/mpeg" />
               </audio>
             )}
-            <button className="mt-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-              Select
+            <button
+              onClick={() => handleSelect(song)}
+              className={`mt-2 px-3 py-1 rounded text-white ${
+                selectedSongId === song.trackId ? 'bg-gray-500' : 'bg-green-600 hover:bg-green-700'
+              }`}
+              disabled={selectedSongId === song.trackId}
+            >
+              {selectedSongId === song.trackId ? 'Selected' : 'Select'}
             </button>
           </div>
         ))}
