@@ -87,8 +87,23 @@ export default function LivePage() {
     });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
   return (
     <div className="p-4 text-center">
+      <div className="flex justify-end">
+        <button
+          onClick={handleLogout}
+          className="text-sm text-red-600 underline hover:text-red-800"
+        >
+          Logout
+        </button>
+      </div>
+
       <h1 className="text-2xl font-bold mb-4">Now Playing</h1>
       {!song ? (
         <>
