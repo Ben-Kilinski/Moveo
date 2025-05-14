@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Music, Drum, Guitar, Mic2, Piano } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Song {
   trackId: number;
@@ -33,9 +34,18 @@ const instructionMap: Record<string, string> = {
 export default function LivePage() {
   const [song, setSong] = useState<Song | null>(null);
   const [audioKey, setAudioKey] = useState(0);
+  const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const instrument = user.instrument || 'unknown';
+
+  useEffect(() => {
+    if (!user.instrument) {
+      navigate('/onboarding');
+      return;
+    }
+  }, []);
+
   const Icon = iconMap[instrument] || Music;
   const instruction = instructionMap[instrument];
 
@@ -77,36 +87,56 @@ export default function LivePage() {
     });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   return (
-    <div className="p-4 text-center">
-      <h1 className="text-2xl font-bold mb-4">Now Playing</h1>
+    <div className="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-br from-slate-100 to-slate-200 text-center">
+      <div className="absolute top-4 right-6">
+        <button
+          onClick={handleLogout}
+          className="text-sm text-red-600 underline hover:text-red-800"
+        >
+          Logout
+        </button>
+      </div>
+
+      <h1 className="text-3xl font-bold mb-6">Now Playing</h1>
+
       {!song ? (
         <>
-          <p className="mb-4 text-red-500">No song selected</p>
+          <p className="mb-6 text-red-500">No song selected</p>
           <button
             onClick={selectExampleSong}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="animate-pulse bg-blue-600 text-white px-6 py-3 rounded-xl shadow hover:bg-blue-700 transition"
           >
             Load Example Song
           </button>
         </>
       ) : (
         <>
-          <img src={song.artworkUrl100} alt={song.trackName} className="mx-auto rounded mb-4" />
-          <h2 className="text-xl font-semibold">{song.trackName}</h2>
+          <img
+            src={song.artworkUrl100}
+            alt={song.trackName}
+            className="mx-auto mb-6 w-48 h-48 rounded-xl shadow-lg hover:scale-105 transition"
+          />
+          <h2 className="text-2xl font-bold mb-1">{song.trackName}</h2>
           <p className="text-gray-600 mb-4">{song.artistName}</p>
+
           {song.previewUrl && (
-            <audio key={audioKey} controls autoPlay className="mx-auto">
+            <audio key={audioKey} controls autoPlay className="mx-auto mb-6">
               <source src={song.previewUrl} type="audio/mpeg" />
             </audio>
           )}
 
-          <div className="mt-6 p-4 border rounded shadow bg-gray-50">
+          <div className="max-w-md mx-auto mt-6 p-4 border border-slate-300 bg-white/60 backdrop-blur rounded-lg shadow">
             <h3 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2">
               <Icon className="w-5 h-5" /> Instructions for: {instrument}
             </h3>
-            <p className="text-sm text-gray-700">{instruction}</p>
+            <p className="text-sm text-gray-700 leading-relaxed">{instruction}</p>
           </div>
         </>
       )}
