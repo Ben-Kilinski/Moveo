@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Song {
   trackId: number;
@@ -13,6 +14,7 @@ export default function AdminMainPage() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedSongId, setSelectedSongId] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   const searchSongs = async () => {
     setLoading(true);
@@ -61,6 +63,12 @@ export default function AdminMainPage() {
         />
         <button onClick={searchSongs} className="bg-blue-600 text-white px-4 py-2 rounded">
           Search
+        </button>
+        <button
+          onClick={() => navigate('/admin/results')}
+          className="bg-gray-700 text-white px-4 py-2 rounded"
+        >
+          View History
         </button>
       </div>
 
