@@ -58,20 +58,25 @@ export default function LivePage() {
   }, []);
 
   const selectExampleSong = async () => {
-    const exampleSong = {
-      trackId: 999,
-      trackName: 'Superstition',
-      artistName: 'Stevie Wonder',
-      artworkUrl100: 'https://upload.wikimedia.org/wikipedia/en/e/e8/Stevie_Wonder_-_Superstition.jpg',
-      previewUrl: 'https://p.scdn.co/mp3-preview/example.mp3'
+    const res = await fetch('https://itunes.apple.com/search?term=beatles&media=music&limit=1');
+    const data = await res.json();
+    const song = data.results[0];
+
+    const payload = {
+      trackId: song.trackId,
+      trackName: song.trackName,
+      artistName: song.artistName,
+      artworkUrl100: song.artworkUrl100,
+      previewUrl: song.previewUrl,
     };
 
     await fetch('http://localhost:3001/api/songs/current', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(exampleSong)
+      body: JSON.stringify(payload),
     });
   };
+
 
   return (
     <div className="p-4 text-center">
