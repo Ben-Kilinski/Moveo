@@ -13,6 +13,13 @@ export default function ResultsPage() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const clearHistory = async () => {
+    const confirm = window.confirm('Are you sure you want to clear the history?');
+    if (!confirm) return;
+    await fetch('http://localhost:3001/api/songs/history', { method: 'DELETE' });
+    setSongs([]);
+  };
+
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -35,7 +42,15 @@ export default function ResultsPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Selection History</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">Selection History</h1>
+        <button
+          onClick={clearHistory}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Clear History
+        </button>
+      </div>
       <ul className="space-y-4">
         {songs.map((song) => (
           <li key={song.trackId} className="flex items-center gap-4 border-b pb-4">
@@ -58,3 +73,4 @@ export default function ResultsPage() {
     </div>
   );
 }
+
