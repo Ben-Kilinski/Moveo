@@ -9,13 +9,29 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [instrument, setInstrument] = useState('guitar');
+  const [message, setMessage] = useState('');
   const location = useLocation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const role = location.pathname.includes('/admin') ? 'admin' : 'user';
-    console.log({ username, password, instrument, role });
-    // TODO: enviar dados para backend
+
+    try {
+      const res = await fetch('http://localhost:3001/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password, instrument, role }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Signup failed');
+
+      setMessage('User created successfully ✅');
+    } catch (err: any) {
+      setMessage(err.message);
+    }
   };
 
   return (
@@ -56,6 +72,7 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
         >
           Sign Up
         </button>
+        {message && <p className="mt-2 text-sm text-center text-red-600">{message}</p>}
       </form>
     </div>
   );
