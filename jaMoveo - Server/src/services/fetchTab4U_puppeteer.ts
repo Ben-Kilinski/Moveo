@@ -4,7 +4,8 @@ export async function fetchChordsAndLyricsFromTab4U(title: string, artist: strin
   const query = encodeURIComponent(title);
   const searchUrl = `https://www.tab4u.com/search.php?keyword=${query}`;
 
-  const browser = await puppeteer.launch({ headless: 'new' }); // 'new' para evitar warning
+  const browser = await puppeteer.launch({ headless: true });
+; // 'new' para evitar warning
   const page = await browser.newPage();
 
   try {
