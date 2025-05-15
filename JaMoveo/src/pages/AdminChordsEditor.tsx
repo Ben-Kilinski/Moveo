@@ -43,24 +43,29 @@ export default function AdminChordsEditor() {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-slate-100 flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-4">Edit Chords for: {trackName}</h1>
+  <div className="min-h-screen bg-[#355167] text-white p-6 flex flex-col items-center">
+    <h1 className="text-2xl font-bold mb-4 text-[#9F453A]">
+      Edit Chords for: {trackName}
+    </h1>
 
-      <textarea
-        className="w-full max-w-2xl h-96 p-4 border rounded font-mono text-sm"
-        value={chords}
-        onChange={(e) => setChords(e.target.value)}
-        placeholder='Cole aqui o JSON da cifra (como no hey_jude.json)'
-      />
+    <textarea
+      className="w-full max-w-2xl h-96 p-4 bg-[#1f2c38] border border-[#9F453A] rounded font-mono text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
+      value={chords}
+      onChange={(e) => setChords(e.target.value)}
+      placeholder='Paste the chord JSON here (like in hey_jude.json)'
+    />
 
-      <button
-        onClick={handleSave}
-        className="mt-4 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-      >
-        Save Chords
-      </button>
+    <button
+      onClick={handleSave}
+      className="mt-4 bg-[#9F453A] text-white px-6 py-2 rounded hover:bg-[#b85547] transition"
+    >
+      Save Chords
+    </button>
 
-      {message && <p className="mt-4 text-sm">{message}</p>}
-    </div>
-  );
+    {message && (
+      <p className="mt-4 text-sm text-center text-gray-300">{message}</p>
+    )}
+  </div>
+);
+
 }
