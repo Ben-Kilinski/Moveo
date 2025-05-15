@@ -96,85 +96,85 @@ export default function LivePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-br from-slate-100 to-slate-200 text-center">
-      <div className="absolute top-4 right-6">
-        <button
-          onClick={handleLogout}
-          className="text-sm text-red-600 underline hover:text-red-800"
-        >
-          Logout
-        </button>
-      </div>
-
-      <h1 className="text-3xl font-bold mb-6">Now Playing</h1>
-
-      {!song ? (
-        <>
-          <p className="mb-6 text-red-500">No song selected</p>
-          <button
-            onClick={selectExampleSong}
-            className="animate-pulse bg-blue-600 text-white px-6 py-3 rounded-xl shadow hover:bg-blue-700 transition"
-          >
-            Load Example Song
-          </button>
-        </>
-      ) : (
-        <>
-          <img
-            src={song.artworkUrl100}
-            alt={song.trackName}
-            className="mx-auto mb-6 w-48 h-48 rounded-xl shadow-lg hover:scale-105 transition"
-          />
-          <h2 className="text-2xl font-bold mb-1">{song.trackName}</h2>
-          <p className="text-gray-600 mb-4">{song.artistName}</p>
-
-          {song.previewUrl && (
-            <audio key={audioKey} controls autoPlay className="mx-auto mb-6">
-              <source src={song.previewUrl} type="audio/mpeg" />
-            </audio>
-          )}
-
-          <div className="max-w-md mx-auto mt-6 p-4 border border-slate-300 bg-white/60 backdrop-blur rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2">
-              <Icon className="w-5 h-5" /> Instructions for: {instrument}
-            </h3>
-            <p className="text-sm text-gray-700 leading-relaxed">{instruction}</p>
-          </div>
-
-          {song.lyrics && (
-            <div className="mt-6 p-4 border rounded shadow bg-white text-left max-w-2xl mx-auto">
-              <h4 className="text-lg font-bold mb-2">Lyrics</h4>
-              <pre className="whitespace-pre-wrap text-sm text-gray-800">{song.lyrics}</pre>
-            </div>
-          )}
-          {song.chords && (
-            <div className="mt-6 p-4 border rounded shadow bg-white max-w-2xl mx-auto">
-              <h4 className="text-lg font-bold mb-4 text-center">Chords</h4>
-              <div className="space-y-4 text-left font-mono text-sm">
-                {JSON.parse(song.chords).map((line: any[], lineIdx: number) => (
-                  <div key={lineIdx}>
-                    <div className="flex gap-2">
-                      {line.map((item, idx) => (
-                        <span key={idx} className="min-w-[50px] text-blue-600 text-center">
-                          {item.chords || ''}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex gap-2">
-                      {line.map((item, idx) => (
-                        <span key={idx} className="min-w-[50px] text-gray-800 text-center">
-                          {item.lyrics}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-        </>
-      )}
+  <div className="min-h-screen flex flex-col justify-center items-center p-6 bg-[#355167] text-white text-center relative">
+    <div className="absolute top-4 right-6">
+      <button
+        onClick={handleLogout}
+        className="text-sm text-red-400 underline hover:text-red-600"
+      >
+        Logout
+      </button>
     </div>
-  );
+
+    <h1 className="text-3xl font-bold mb-6 text-[#9F453A]">Now Playing</h1>
+
+    {!song ? (
+      <>
+        <p className="mb-6 text-red-300">No song selected</p>
+        <button
+          onClick={selectExampleSong}
+          className="animate-pulse bg-[#9F453A] text-white px-6 py-3 rounded-xl shadow hover:bg-[#b85547] transition"
+        >
+          Load Example Song
+        </button>
+      </>
+    ) : (
+      <>
+        <img
+          src={song.artworkUrl100}
+          alt={song.trackName}
+          className="mx-auto mb-6 w-24 h-24 rounded-lg shadow hover:scale-105 transition"
+        />
+        <h2 className="text-2xl font-bold mb-1">{song.trackName}</h2>
+        <p className="text-gray-300 mb-4">{song.artistName}</p>
+
+        {song.previewUrl && (
+          <audio key={audioKey} controls autoPlay className="mx-auto mb-6">
+            <source src={song.previewUrl} type="audio/mpeg" />
+          </audio>
+        )}
+
+        <div className="max-w-md mx-auto mt-6 p-4 border border-[#9F453A] bg-[#1f2c38] rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2 text-[#9F453A]">
+            <Icon className="w-5 h-5" /> Instructions for: {instrument}
+          </h3>
+          <p className="text-sm text-gray-200 leading-relaxed">{instruction}</p>
+        </div>
+
+        {song.lyrics && (
+          <div className="mt-6 p-4 border border-[#9F453A] rounded shadow bg-[#1f2c38] text-left max-w-2xl mx-auto">
+            <h4 className="text-lg font-bold mb-2 text-[#9F453A]">Lyrics</h4>
+            <pre className="whitespace-pre-wrap text-sm text-gray-100">{song.lyrics}</pre>
+          </div>
+        )}
+        {song.chords && (
+          <div className="mt-6 p-4 border border-[#9F453A] rounded shadow bg-[#1f2c38] max-w-2xl mx-auto">
+            <h4 className="text-lg font-bold mb-4 text-center text-[#9F453A]">Chords</h4>
+            <div className="space-y-4 text-left font-mono text-sm">
+              {JSON.parse(song.chords).map((line: any[], lineIdx: number) => (
+                <div key={lineIdx}>
+                  <div className="flex gap-2 justify-center">
+                    {line.map((item, idx) => (
+                      <span key={idx} className="min-w-[50px] text-green-300 text-center">
+                        {item.chords || ''}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 justify-center">
+                    {line.map((item, idx) => (
+                      <span key={idx} className="min-w-[50px] text-gray-100 text-center">
+                        {item.lyrics}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </>
+    )}
+  </div>
+);
+
 }
