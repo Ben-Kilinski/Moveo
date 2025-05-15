@@ -1,4 +1,4 @@
-import { fetchChordsAndLyricsFromTab4U } from './src/utils/fetchTab4U';
+import { fetchChordsAndLyricsFromTab4U } from './src/services/fetchTab4U';
 
 async function test() {
   const { lyrics, chords } = await fetchChordsAndLyricsFromTab4U("מישהו", "עידן רייכל");
