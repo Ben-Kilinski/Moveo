@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import moveoLogo from '../assets/jamoveologo.png'; // Altere o caminho conforme necessário
+import moveoLogo from '../assets/jamoveologo.png';
+import { useNavigate } from 'react-router-dom';
 
 interface SignupPageProps {
   isAdmin?: boolean;
@@ -12,6 +13,7 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
   const [instrument, setInstrument] = useState('guitar');
   const [message, setMessage] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +87,17 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
             <p className="mt-2 text-sm text-center text-red-400">{message}</p>
           )}
         </form>
+
+        <p className="mt-6 text-sm text-center">
+          Already have an account?{' '}
+          <span
+            onClick={() => navigate('/login')}
+            className="text-[#9F453A] hover:underline cursor-pointer font-semibold"
+          >
+            Log in
+          </span>
+        </p>
+
       </div>
     </div>
   );

@@ -35,35 +35,49 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-slate-100 to-slate-200 p-6">
-      <div className="w-full max-w-md bg-white/60 backdrop-blur p-6 rounded-xl shadow">
-        <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Username"
-            className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-          >
-            Login
-          </button>
-          {message && <p className="mt-2 text-sm text-center text-red-600">{message}</p>}
-        </form>
-      </div>
+  <div className="min-h-screen flex flex-col justify-center items-center bg-[#355167] text-white px-4">
+    <div className="w-full max-w-md bg-[#1f2c38] p-8 rounded-2xl shadow-xl border border-[#9F453A]">
+      <h1 className="text-2xl font-bold text-center mb-6 text-[#9F453A]">Login</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          placeholder="Username"
+          className="w-full bg-[#2b3e4f] border border-gray-600 p-3 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full bg-[#2b3e4f] border border-gray-600 p-3 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button
+          type="submit"
+          className="w-full bg-[#9F453A] text-white font-semibold py-3 rounded hover:bg-[#b85547] transition-colors"
+        >
+          Login
+        </button>
+        {message && (
+          <p className="mt-2 text-sm text-center text-red-400">{message}</p>
+        )}
+      </form>
+
+      <p className="mt-6 text-sm text-center">
+        First time here?{' '}
+        <span
+          onClick={() => navigate('/signup')}
+          className="text-[#9F453A] hover:underline cursor-pointer font-semibold"
+        >
+          Signup
+        </span>
+      </p>
     </div>
-  );
+  </div>
+);
+
+
 }
