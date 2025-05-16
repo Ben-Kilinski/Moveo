@@ -1,26 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import moveoLogo from '../assets/jamoveologo.png';
 import { useNavigate } from 'react-router-dom';
 
-interface SignupPageProps {
-  isAdmin?: boolean; // prop opcional
-}
-
-export default function SignupPage({ isAdmin = false }: SignupPageProps) {
+export default function SignupPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [instrument, setInstrument] = useState('guitar');
-  const [role, setRole] = useState<'user' | 'admin'>(isAdmin ? 'admin' : 'user'); // inicia baseado em isAdmin
+  const [role, setRole] = useState<'user' | 'admin' | ''>(''); // inicia vazio
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  // Se a prop isAdmin mudar, atualize o role (caso dinâmico)
-  useEffect(() => {
-    if (isAdmin) setRole('admin');
-  }, [isAdmin]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!role) {
+      setMessage('Please select a role before signing up.');
+      return;
+    }
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
@@ -33,8 +29,7 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
       if (!res.ok) throw new Error(data.error || 'Signup failed');
 
       setMessage('User created successfully ✅');
-      // opcional: redirecionar após sucesso
-      // navigate('/login');
+      // opcional: navigate('/login');
     } catch (err: any) {
       setMessage(err.message);
     }
@@ -46,7 +41,7 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
 
       <div className="bg-[#1f2c38] p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#9F453A]">
         <h1 className="text-2xl font-bold mb-6 text-center text-[#9F453A]">
-          Signup {isAdmin ? '(Admin)' : ''}
+          Signup
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -79,17 +74,18 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
             <option value="vocals">Vocals</option>
           </select>
 
-          {/* Mostra o select só se NÃO for admin */}
-          {!isAdmin && (
-            <select
-              className="w-full bg-[#2b3e4f] border border-gray-600 p-3 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
-              value={role}
-              onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-          )}
+          <select
+            className="w-full bg-[#2b3e4f] border border-gray-600 p-3 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
+            value={role}
+            onChange={(e) => setRole(e.target.value as 'user' | 'admin' | '')}
+            required
+          >
+            <option value="" disabled>
+              Select your role
+            </option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
 
           <button
             type="submit"

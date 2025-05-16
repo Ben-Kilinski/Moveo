@@ -7,16 +7,13 @@ import ResultsPage from './pages/ResultsPage';
 import LivePage from './pages/LivePage';
 import OnboardingPage from './pages/OnboardingPage';
 import RequireAuth from './components/RequireAuth';
-import AdminChordsEditor from './pages/AdminChordsEditor'; // ✅ importado
+import AdminChordsEditor from './pages/AdminChordsEditor';
 
-function App() {
+export default function App() {
   return (
     <Routes>
       <Route path="/signup" element={<SignupPage />} />
-      <Route
-        path="/admin/signup"
-        Component={() => <SignupPage isAdmin={true} />}
-      />
+      {/* Removido signup admin separado */}
       <Route path="/login" element={<LoginPage />} />
 
       <Route
@@ -51,5 +48,3 @@ function App() {
     </Routes>
   );
 }
-
-export default App;
