@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import socket from '../socket'; // 👈 Ajuste o caminho conforme sua estrutura
 
 interface Song {
   trackId: number;
@@ -27,7 +28,6 @@ export default function AdminMainPage() {
     fetchCurrent();
   }, []);
 
-
   const searchSongs = async () => {
     setLoading(true);
     const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&limit=6`);
@@ -51,10 +51,9 @@ export default function AdminMainPage() {
           trackId: song.trackId,
           trackName: song.trackName,
           artistName: song.artistName,
-          artworkUrl100: song.artworkUrl100, 
-          previewUrl: song.previewUrl
+          artworkUrl100: song.artworkUrl100,
+          previewUrl: song.previewUrl,
         }),
-
       });
 
       if (!res.ok) {
@@ -62,10 +61,14 @@ export default function AdminMainPage() {
         alert('Failed to select song: ' + error.message);
       } else {
         alert('Song selected 🎶');
+
         // buscar o id real no banco
         const current = await fetch(`${import.meta.env.VITE_API_URL}/songs/current`);
         const data = await current.json();
         setCurrentDbId(data.id);
+
+        // 🔊 EMITIR EVENTO PARA TODOS OS USUÁRIOS
+        socket.emit('song-selected', data); // envia a música completa para todos
       }
     } catch (err) {
       console.error(err);
@@ -158,5 +161,4 @@ export default function AdminMainPage() {
       </div>
     </div>
   );
-
 }
