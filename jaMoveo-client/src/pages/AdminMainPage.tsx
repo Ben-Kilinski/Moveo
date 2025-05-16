@@ -21,7 +21,7 @@ export default function AdminMainPage() {
 
   useEffect(() => {
     const fetchCurrent = async () => {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/songs/current`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/current`);
       const data = await res.json();
       setLatestSong({ id: data.id, trackName: data.trackName });
     };
@@ -41,7 +41,7 @@ export default function AdminMainPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/songs/current`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/current`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export default function AdminMainPage() {
         alert('Song selected 🎶');
 
         // buscar o id real no banco
-        const current = await fetch(`${import.meta.env.VITE_API_URL}/songs/current`);
+        const current = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/current`);
         const data = await current.json();
         setCurrentDbId(data.id);
 

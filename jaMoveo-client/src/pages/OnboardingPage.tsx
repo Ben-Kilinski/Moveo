@@ -80,7 +80,7 @@ export default function LivePage() {
       previewUrl: song.previewUrl,
     };
 
-    await fetch(`${import.meta.env.VITE_API_URL}/songs/current`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/songs/current`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
