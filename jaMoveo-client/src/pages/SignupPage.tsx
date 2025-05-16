@@ -1,14 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import moveoLogo from '../assets/jamoveologo.png';
 import { useNavigate } from 'react-router-dom';
 
-export default function SignupPage() {
+interface SignupPageProps {
+  isAdmin?: boolean; // prop opcional
+}
+
+export default function SignupPage({ isAdmin = false }: SignupPageProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [instrument, setInstrument] = useState('guitar');
-  const [role, setRole] = useState<'user' | 'admin'>('user'); // novo state
+  const [role, setRole] = useState<'user' | 'admin'>(isAdmin ? 'admin' : 'user'); // inicia baseado em isAdmin
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
+  // Se a prop isAdmin mudar, atualize o role (caso dinâmico)
+  useEffect(() => {
+    if (isAdmin) setRole('admin');
+  }, [isAdmin]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +33,8 @@ export default function SignupPage() {
       if (!res.ok) throw new Error(data.error || 'Signup failed');
 
       setMessage('User created successfully ✅');
+      // opcional: redirecionar após sucesso
+      // navigate('/login');
     } catch (err: any) {
       setMessage(err.message);
     }
@@ -35,7 +46,7 @@ export default function SignupPage() {
 
       <div className="bg-[#1f2c38] p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#9F453A]">
         <h1 className="text-2xl font-bold mb-6 text-center text-[#9F453A]">
-          Signup
+          Signup {isAdmin ? '(Admin)' : ''}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -68,15 +79,17 @@ export default function SignupPage() {
             <option value="vocals">Vocals</option>
           </select>
 
-          {/* NOVO CAMPO PARA ESCOLHER USER OU ADMIN */}
-          <select
-            className="w-full bg-[#2b3e4f] border border-gray-600 p-3 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
-            value={role}
-            onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
-          >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
+          {/* Mostra o select só se NÃO for admin */}
+          {!isAdmin && (
+            <select
+              className="w-full bg-[#2b3e4f] border border-gray-600 p-3 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
+              value={role}
+              onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          )}
 
           <button
             type="submit"
