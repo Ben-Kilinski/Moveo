@@ -47,7 +47,14 @@ export default function AdminMainPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(song),
+        body: JSON.stringify({
+          trackId: song.trackId,
+          trackName: song.trackName,
+          artistName: song.artistName,
+          artworkUrl100: song.artworkUrl100, 
+          previewUrl: song.previewUrl
+        }),
+
       });
 
       if (!res.ok) {
@@ -130,8 +137,8 @@ export default function AdminMainPage() {
             <button
               onClick={() => handleSelect(song)}
               className={`mt-2 px-4 py-2 rounded text-white font-medium ${selectedSongId === song.trackId
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-green-600 hover:bg-green-700'
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700'
                 }`}
               disabled={selectedSongId === song.trackId}
             >
