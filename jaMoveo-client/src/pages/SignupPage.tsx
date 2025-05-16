@@ -1,26 +1,20 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import moveoLogo from '../assets/jamoveologo.png';
 import { useNavigate } from 'react-router-dom';
 
-interface SignupPageProps {
-  isAdmin?: boolean;
-}
-
-export default function SignupPage({ isAdmin = false }: SignupPageProps) {
+export default function SignupPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [instrument, setInstrument] = useState('guitar');
+  const [role, setRole] = useState<'user' | 'admin'>('user'); // novo state
   const [message, setMessage] = useState('');
-  const location = useLocation();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const role = location.pathname.includes('/admin') ? 'admin' : 'user';
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, instrument, role }),
@@ -37,15 +31,11 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
 
   return (
     <div className="min-h-screen bg-[#355167] text-white flex flex-col items-center justify-center px-4">
-      <img
-        src={moveoLogo}
-        alt="Moveo Logo"
-        className="w-32 h-auto mb-8"
-      />
+      <img src={moveoLogo} alt="Moveo Logo" className="w-32 h-auto mb-8" />
 
       <div className="bg-[#1f2c38] p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#9F453A]">
         <h1 className="text-2xl font-bold mb-6 text-center text-[#9F453A]">
-          Signup ({isAdmin ? 'Admin' : 'User'})
+          Signup
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -77,12 +67,24 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
             <option value="keyboards">Keyboards</option>
             <option value="vocals">Vocals</option>
           </select>
+
+          {/* NOVO CAMPO PARA ESCOLHER USER OU ADMIN */}
+          <select
+            className="w-full bg-[#2b3e4f] border border-gray-600 p-3 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#9F453A]"
+            value={role}
+            onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+
           <button
             type="submit"
             className="w-full bg-[#9F453A] text-white font-semibold py-3 rounded hover:bg-[#b85547] transition-colors"
           >
             Sign Up
           </button>
+
           {message && (
             <p className="mt-2 text-sm text-center text-red-400">{message}</p>
           )}
@@ -97,7 +99,6 @@ export default function SignupPage({ isAdmin = false }: SignupPageProps) {
             Log in
           </span>
         </p>
-
       </div>
     </div>
   );
