@@ -9,11 +9,11 @@ import OnboardingPage from './pages/OnboardingPage';
 import RequireAuth from './components/RequireAuth';
 import AdminChordsEditor from './pages/AdminChordsEditor'; // ✅ importado
 
-function App() {
+export default function App() {
   return (
     <Routes>
       <Route path="/signup" element={<SignupPage />} />
-      <Route path="/admin/signup" element={<SignupPage isAdmin />} />
+      <Route path="/admin/signup" element={<SignupPageWrapper />} />
       <Route path="/login" element={<LoginPage />} />
 
       <Route
@@ -49,4 +49,7 @@ function App() {
   );
 }
 
-export default App;
+// Wrapper para evitar erro de tipagem
+function SignupPageWrapper() {
+  return <SignupPage isAdmin={true} />;
+}
