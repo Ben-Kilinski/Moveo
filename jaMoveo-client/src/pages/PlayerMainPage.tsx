@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { useParams } from 'react-router-dom';
 import socket from '../socket';
+=======
+import socket from '../socket'; // ajuste o caminho conforme a estrutura
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
 
 interface Song {
   id: number;
@@ -13,6 +17,7 @@ interface Song {
   chords: string | null;
 }
 
+<<<<<<< HEAD
 interface User {
   id: number;
   username: string;
@@ -72,6 +77,33 @@ export default function PlayerMainPage() {
       <h2 className="text-md text-center mb-6 text-gray-400">by {song.artistName}</h2>
 
       <div className="flex justify-center mb-6">
+=======
+export default function PlayerMainPage() {
+  const [song, setSong] = useState<Song | null>(null);
+
+  useEffect(() => {
+    // 🎧 Escuta o evento enviado pelo admin
+    socket.on('song-selected', (data: Song) => {
+      console.log('🎶 Música recebida via socket:', data);
+      setSong(data);
+    });
+
+    return () => {
+      socket.off('song-selected');
+    };
+  }, []);
+
+  if (!song) {
+    return <div className="p-4 text-white text-xl text-center">🎵 Waiting for next song...</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-[#1f2c38] text-white p-6">
+      <h1 className="text-2xl font-bold text-center mb-4">{song.trackName}</h1>
+      <h2 className="text-md text-center mb-6 text-gray-400">by {song.artistName}</h2>
+
+      <div className="flex justify-center mb-4">
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
         <img
           src={song.artworkUrl100}
           alt={song.trackName}
@@ -79,6 +111,7 @@ export default function PlayerMainPage() {
         />
       </div>
 
+<<<<<<< HEAD
       {song.previewUrl && (
         <div className="flex justify-center mb-6">
           <audio controls className="w-full max-w-md">
@@ -116,6 +149,19 @@ export default function PlayerMainPage() {
         ) : (
           <p className="text-white whitespace-pre-line">{song.lyrics}</p>
         )}
+=======
+      <div className="bg-[#2b3e4f] p-6 rounded-xl max-w-3xl mx-auto whitespace-pre-wrap text-lg leading-relaxed">
+        {/* Aqui renderiza só a letra ou letra + acordes baseado no usuário (ajustar isso se tiver role/instrumento) */}
+        {song.chords ? (
+          <>
+            <p className="text-green-400 mb-2">🎸 Chords:</p>
+            <pre className="text-white">{song.chords}</pre>
+            <hr className="my-4 border-gray-600" />
+          </>
+        ) : null}
+
+        <p className="text-white whitespace-pre-line">{song.lyrics}</p>
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
       </div>
     </div>
   );

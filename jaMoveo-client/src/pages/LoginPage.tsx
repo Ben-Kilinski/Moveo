@@ -27,7 +27,11 @@ export default function LoginPage() {
       if (data.user.role === 'admin') {
         navigate('/admin');
       } else {
+<<<<<<< HEAD
         navigate('/live');
+=======
+        navigate('/player');
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
       }
     } catch (err: any) {
       setMessage(err.message);

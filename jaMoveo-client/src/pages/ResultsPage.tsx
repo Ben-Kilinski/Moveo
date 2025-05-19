@@ -76,7 +76,11 @@ if (!songs.length) {
 }
 
 return (
+<<<<<<< HEAD
   <div className="min-h-screen bg-[#355167] text-white p-6 mt-14">
+=======
+  <div className="min-h-screen bg-[#355167] text-white p-6">
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
     <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
       <h1 className="text-2xl font-bold text-[#9F453A]">Selection History</h1>
       <div className="flex gap-2">

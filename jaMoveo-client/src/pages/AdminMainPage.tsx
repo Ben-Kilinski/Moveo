@@ -16,12 +16,21 @@ export default function AdminMainPage() {
   const [loading, setLoading] = useState(false);
   const [selectedSongId, setSelectedSongId] = useState<number | null>(null);
   const [currentDbId, setCurrentDbId] = useState<number | null>(null);
+<<<<<<< HEAD
   const [latestSong, setLatestSong] = useState<{ id: number; trackName: string } | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCurrent = async () => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/current`);
+=======
+  const navigate = useNavigate();
+  const [latestSong, setLatestSong] = useState<{ id: number; trackName: string } | null>(null);
+
+  useEffect(() => {
+    const fetchCurrent = async () => {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/songs/current`);
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
       const data = await res.json();
       setLatestSong({ id: data.id, trackName: data.trackName });
     };
@@ -41,18 +50,33 @@ export default function AdminMainPage() {
 
     try {
       const token = localStorage.getItem('token');
+<<<<<<< HEAD
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/current`, {
+=======
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/songs/current`, {
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
+<<<<<<< HEAD
         body: JSON.stringify(song),
+=======
+        body: JSON.stringify({
+          trackId: song.trackId,
+          trackName: song.trackName,
+          artistName: song.artistName,
+          artworkUrl100: song.artworkUrl100,
+          previewUrl: song.previewUrl,
+        }),
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
       });
 
       if (!res.ok) {
         const error = await res.json();
         alert('Failed to select song: ' + error.message);
+<<<<<<< HEAD
         return;
       }
 
@@ -65,6 +89,19 @@ export default function AdminMainPage() {
 
       alert('Song selected 🎶');
       navigate(`/player/${data.id}`);
+=======
+      } else {
+        alert('Song selected 🎶');
+
+        // buscar o id real no banco
+        const current = await fetch(`${import.meta.env.VITE_API_URL}/songs/current`);
+        const data = await current.json();
+        setCurrentDbId(data.id);
+
+        // 🔊 EMITIR EVENTO PARA TODOS OS USUÁRIOS
+        socket.emit('song-selected', data); // envia a música completa para todos
+      }
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
     } catch (err) {
       console.error(err);
       alert('Something went wrong.');
@@ -80,6 +117,7 @@ export default function AdminMainPage() {
           <p className="text-sm text-white">
             Última música selecionada: <strong>{latestSong.trackName}</strong>
           </p>
+<<<<<<< HEAD
           <div className="mt-3 sm:mt-0 flex gap-2">
             <button
               onClick={() => navigate(`/admin/chords-editor/${latestSong.id}`)}
@@ -99,6 +137,17 @@ export default function AdminMainPage() {
       )}
 
 
+=======
+          <button
+            onClick={() => navigate(`/admin/chords-editor/${latestSong.id}`)}
+            className="mt-3 sm:mt-0 bg-[#9F453A] text-white px-4 py-2 rounded hover:bg-[#b85547] transition"
+          >
+            Editar Cifras
+          </button>
+        </div>
+      )}
+
+>>>>>>> b6d012b2bb892e73be803181dbae202f0d357d57
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <input
           type="text"
