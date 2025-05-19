@@ -39,33 +39,33 @@ export default function LivePage() {
   const [audioKey, setAudioKey] = useState(0);
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const instrument = user.instrument || 'unknown';
-
-  useEffect(() => {
-    if (!user.instrument) {
-      navigate('/onboarding');
-    }
-  }, []);
-
+  const storedUser = localStorage.getItem('user');
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const instrument = user?.instrument || 'unknown';
   const Icon = iconMap[instrument] || Music;
   const instruction = instructionMap[instrument];
 
   useEffect(() => {
-  console.log('🛜 Registrando socket listener');
+    if (!user || !user.instrument) {
+      navigate('/onboarding');
+    }
+  }, []);
 
-  socket.on('song-selected', (song: Song) => {
-    console.log('🎶 Recebido via socket:', song);
-    setSong(song);
-    setAudioKey(prev => prev + 1);
-  });
+  useEffect(() => {
+    const handleSong = (song: Song) => {
+      console.log('🎶 Recebido via socket:', song);
+      setSong(song);
+      setAudioKey(prev => prev + 1);
+    };
 
-  return () => {
-    console.log('❌ Removendo socket listener');
-    socket.off('song-selected');
-  };
-}, []);
+    console.log('🛜 Registrando socket listener');
+    socket.on('song-selected', handleSong);
 
+    return () => {
+      console.log('❌ Removendo socket listener');
+      socket.off('song-selected', handleSong);
+    };
+  }, []);
 
   const selectExampleSong = async () => {
     const res = await fetch('https://itunes.apple.com/search?term=beatles&media=music&limit=1');
@@ -146,7 +146,7 @@ export default function LivePage() {
             </div>
           )}
 
-          {song.chords && (
+          {song.chords && instrument !== 'vocals' && (
             <div className="mt-6 p-4 border border-[#9F453A] rounded shadow bg-[#1f2c38] max-w-2xl mx-auto">
               <h4 className="text-lg font-bold mb-4 text-center text-[#9F453A]">Chords</h4>
               <div className="space-y-4 text-left font-mono text-sm">

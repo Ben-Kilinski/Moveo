@@ -16,8 +16,8 @@ export default function AdminMainPage() {
   const [loading, setLoading] = useState(false);
   const [selectedSongId, setSelectedSongId] = useState<number | null>(null);
   const [currentDbId, setCurrentDbId] = useState<number | null>(null);
-  const navigate = useNavigate();
   const [latestSong, setLatestSong] = useState<{ id: number; trackName: string } | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCurrent = async () => {
@@ -47,29 +47,24 @@ export default function AdminMainPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          trackId: song.trackId,
-          trackName: song.trackName,
-          artistName: song.artistName,
-          artworkUrl100: song.artworkUrl100,
-          previewUrl: song.previewUrl,
-        }),
+        body: JSON.stringify(song),
       });
 
       if (!res.ok) {
         const error = await res.json();
         alert('Failed to select song: ' + error.message);
-      } else {
-        alert('Song selected 🎶');
-
-        // buscar o id real no banco
-        const current = await fetch(`${import.meta.env.VITE_API_URL}/api/songs/current`);
-        const data = await current.json();
-        setCurrentDbId(data.id);
-
-        // 🔊 EMITIR EVENTO PARA TODOS OS USUÁRIOS
-        socket.emit('song-selected', data); // envia a música completa para todos
+        return;
       }
+
+      const data = await res.json(); // 🎯 música salva com ID do banco
+      setCurrentDbId(data.id);
+
+      // ✅ Emitir evento para todos os sockets conectados
+      console.log('📡 Emitindo via socket:', data);
+      socket.emit('song-selected', data);
+
+      alert('Song selected 🎶');
+      navigate(`/player/${data.id}`);
     } catch (err) {
       console.error(err);
       alert('Something went wrong.');
@@ -85,14 +80,24 @@ export default function AdminMainPage() {
           <p className="text-sm text-white">
             Última música selecionada: <strong>{latestSong.trackName}</strong>
           </p>
-          <button
-            onClick={() => navigate(`/admin/chords-editor/${latestSong.id}`)}
-            className="mt-3 sm:mt-0 bg-[#9F453A] text-white px-4 py-2 rounded hover:bg-[#b85547] transition"
-          >
-            Editar Cifras
-          </button>
+          <div className="mt-3 sm:mt-0 flex gap-2">
+            <button
+              onClick={() => navigate(`/admin/chords-editor/${latestSong.id}`)}
+              className="bg-[#9F453A] text-white px-4 py-2 rounded hover:bg-[#b85547] transition"
+            >
+              Editar Cifras
+            </button>
+
+            <button
+              onClick={() => navigate(`/player/${latestSong.id}`)}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            >
+              Go to Player
+            </button>
+          </div>
         </div>
       )}
+
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <input

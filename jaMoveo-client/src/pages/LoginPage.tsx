@@ -27,7 +27,7 @@ export default function LoginPage() {
       if (data.user.role === 'admin') {
         navigate('/admin');
       } else {
-        navigate('/player');
+        navigate('/live');
       }
     } catch (err: any) {
       setMessage(err.message);
